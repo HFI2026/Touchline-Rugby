@@ -180,9 +180,9 @@ function updateRoomPanel(){
       '<p class="tl-live-hint">Each link expires after five days and can be used once. Maximum four users including you.</p>'+
       '<p id="tl-live-generated" class="tl-live-hint"></p>':'')+
     '<button id="tl-live-refresh" class="tl-live-minor">Refresh shared data</button>'+
-    '<button id="tl-live-download-local" class="tl-live-minor">Download current team backup</button>';
+    (role==='owner'?'<button id="tl-live-download-local" class="tl-live-minor">Download current team backup</button>':'');
   target.querySelector('#tl-live-refresh').onclick=()=>refresh(true);
-  target.querySelector('#tl-live-download-local').onclick=()=>exportBackup();
+  const backupButton=target.querySelector('#tl-live-download-local');if(backupButton)backupButton.onclick=()=>exportBackup();
   if(role==='owner'){
     target.querySelector('#tl-live-invite-editor').onclick=()=>generateInvite('editor');
     target.querySelector('#tl-live-invite-viewer').onclick=()=>generateInvite('viewer');
