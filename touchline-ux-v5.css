@@ -1,0 +1,106 @@
+/* Touchline V5 — compact team-sheet container, expanded selection and fixture stopwatch */
+
+/* Consistent Touchline identity regardless of selected club palette. */
+.side{background:#192e28!important}
+.side .brand,.side .brand span{color:#f8f5e9!important}
+.side .brand span{color:#e5d0a8!important}
+.side .brand .tl3-mark{color:#b2cf99!important}
+.side .nav:not(.active){color:#d0dbd1}
+.side .nav.active{background:#39584a!important;color:#fffefa!important;box-shadow:inset 0 -2px #e5d0a8!important}
+
+/* Give the uploaded crest a proper identity presence in the club hero. */
+.tl3-hero{min-height:365px}
+.tl3-crestwrap{width:136px!important;height:136px!important;border-radius:22px!important;flex:0 0 136px;background:#ffffff1c!important;box-shadow:0 12px 28px #0a171322}
+.tl3-clubcrest{width:100%;height:100%;object-fit:contain;padding:8px}
+.tl3-placeholder{font-size:76px}
+.tl3-hero-top{align-items:flex-start;gap:14px;flex-wrap:wrap}
+.tl3-hero-label{margin:15px 0 auto auto}
+.tl5-datebox{display:flex;flex-direction:column;gap:3px;margin:12px 0 0 15px;align-items:flex-end;color:#fffefa;min-width:145px}
+.tl5-datebox>span{font-size:12px;letter-spacing:.12px;opacity:.87;text-align:right}
+.tl5-datebox strong{font-variant-numeric:tabular-nums;font-size:31px;letter-spacing:-1.5px;font-weight:780;line-height:1.2}
+.tl3-hero-body{margin-top:20px}
+.tl5-clock-tile{background:color-mix(in srgb,var(--accent) 26%,#fffefa)!important;border-color:color-mix(in srgb,var(--accent) 50%,#e8e5d7)!important}
+
+/* Keep the fixed-internal-size pitch from expanding the document / grid. */
+.tl4-selection-wrap{min-width:0;max-width:100%;width:100%;overflow:visible;grid-template-columns:minmax(0,1.7fr) minmax(260px,.75fr)}
+.tl4-pitch-shell,.tl4-selection-side,.tl4-pool{min-width:0;max-width:100%;width:100%}
+.tl4-pitch-scroll{min-width:0;max-width:100%;width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain}
+.tl4-pitch{width:690px;min-width:690px;min-height:815px;max-width:none;margin:0}
+.tl4-pitch-heading{gap:10px;flex-wrap:wrap}
+.tl5-expand-trigger{margin-left:auto;white-space:nowrap;flex-shrink:0}
+.tl4-pitch-heading h2{white-space:normal}
+.tl4-pitch-heading>span{margin-right:4px}
+
+/* The entire pitch AND its associated squad/bench becomes an isolated editor. */
+body.tl5-sheet-modal{overflow:hidden}
+.tl4-selection-wrap.tl5-expanded{
+ position:fixed;inset:0;width:100vw;max-width:none;height:100dvh;z-index:1100;
+ background:#f5f3ed;overflow:auto;overscroll-behavior:contain;
+ display:grid;grid-template-columns:minmax(0,1.75fr) minmax(290px,.65fr);
+ align-content:start;gap:16px;padding:clamp(12px,2vw,26px);
+ box-shadow:0 0 0 300vw #0009;
+}
+.tl5-expanded .tl4-pitch-shell,.tl5-expanded .tl4-pool{background:#fffefa}
+.tl5-expanded .tl4-pitch-shell{align-self:start}
+.tl5-expanded .tl4-pitch-heading{position:sticky;top:-16px;z-index:30;background:#fffefa;padding:8px 0 12px;margin:-5px 0 4px}
+.tl5-expanded .tl4-pitch-scroll{overflow-x:auto;max-width:100%}
+.tl5-expanded .tl4-pitch{width:100%;min-width:690px;min-height:815px}
+.tl5-expanded .tl4-selection-side{align-self:start}
+.tl5-expanded .tl4-pool-list{max-height:calc(100dvh - 290px);min-height:180px}
+.tl5-expanded .tl4-pitch-hint{margin:10px 0}
+.tl5-expanded .tl4-bench{margin-bottom:0}
+
+/* Stopwatch: large practical match-day controls and a high-contrast clock. */
+.tl5-clock-panel{border-radius:22px;background:#fffefa;border:1px solid #e4e1d6;padding:clamp(18px,3vw,32px);box-shadow:0 14px 38px #1a372511}
+.tl5-clock-head{display:flex;justify-content:space-between;align-items:end;flex-wrap:wrap;gap:18px;padding-bottom:22px}
+.tl5-clock-head h2{font-size:clamp(23px,3vw,33px);letter-spacing:-.9px;margin:6px 0 2px}
+.tl5-clock-head p{margin:0;color:#69786d;font-size:13px}
+.tl5-kicker{font-size:10px;letter-spacing:1.7px;font-weight:850;color:var(--primary)}
+.tl5-clock-fixture{display:grid;gap:7px;min-width:210px;max-width:345px}
+.tl5-clock-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(250px,.72fr);gap:17px}
+.tl5-clock-face{background:var(--primary);color:var(--tl4-on-primary,#ffffff);min-height:545px;border-radius:20px;padding:clamp(20px,3vw,40px);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}
+.tl5-clock-face:before{content:"";position:absolute;width:420px;height:420px;border-radius:100%;border:1px solid #ffffff24;right:-135px;top:-220px;pointer-events:none;box-shadow:0 0 0 60px #ffffff0a,0 0 0 130px #ffffff09}
+.tl5-clock-face-head{display:flex;justify-content:space-between;align-items:center;gap:8px;position:relative;z-index:1;flex-wrap:wrap}
+.tl5-clock-chip{display:inline-block;border-radius:24px;background:var(--accent);color:var(--tl4-on-accent,#233327);padding:8px 13px;font-size:12px;font-weight:850;letter-spacing:.5px}
+.tl5-clock-period{font-size:11px;font-weight:780;letter-spacing:1.6px;opacity:.85}
+.tl5-clock-reading{font-size:clamp(60px,11vw,153px);font-weight:790;letter-spacing:-.065em;line-height:1.2;text-align:center;font-variant-numeric:tabular-nums;white-space:nowrap;padding:30px 0 18px;position:relative;z-index:1}
+.tl5-clock-subline{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;opacity:.82;font-weight:630}
+.tl5-clock-progress{height:11px;background:#ffffff34;border-radius:20px;overflow:hidden;margin:12px 0 24px}
+.tl5-clock-progress>div{height:100%;background:var(--accent);border-radius:20px;transition:width .12s linear}
+.tl5-clock-controls{display:grid;grid-template-columns:minmax(0,2fr) repeat(2,minmax(100px,1fr));gap:10px}
+.tl5-clock-controls button{min-height:68px;border:0;border-radius:12px;font-size:14px;font-weight:850;cursor:pointer}
+.tl5-clock-main{background:var(--accent);color:var(--tl4-on-accent,#1c2a22);font-size:20px!important}
+.tl5-clock-second{background:#ffffff22;color:inherit;border:1px solid #ffffff45!important}
+.tl5-clock-second:disabled{opacity:.4}
+.tl5-clock-sidebar{min-width:0;display:flex;flex-direction:column;gap:12px}
+.tl5-clock-setting{background:#f9f9f4;border:1px solid #e7e7dd;border-radius:15px;padding:20px;min-width:0}
+.tl5-clock-setting .tl5-kicker{display:block;margin-bottom:13px}
+.tl5-clock-setting .label{display:block;margin:10px 0 5px}
+.tl5-countdown{display:flex;align-items:center;gap:8px;margin-top:15px;font-size:12px;font-weight:650}
+.tl5-clock-periods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tl5-clock-periods button{border:1px solid #dfdfd5;border-radius:9px;background:#fffefa;color:#34493b;padding:13px 11px;text-align:left;display:grid;gap:7px}
+.tl5-clock-periods button.active{border-color:var(--primary);background:var(--tl4-club-soft)}
+.tl5-clock-periods button span{font-size:11px;color:#647567}.tl5-clock-periods button strong{font-size:20px;font-variant-numeric:tabular-nums}
+.tl5-clock-total{display:flex;justify-content:space-between;align-items:center;gap:7px;margin:12px 0 16px;font-size:12px}
+.tl5-clock-total strong{font-size:26px;font-variant-numeric:tabular-nums}
+.tl5-clock-marks{display:grid;gap:5px;margin-top:12px}
+.tl5-clock-mark{display:flex;justify-content:space-between;border-bottom:1px solid #e5e4dc;padding:6px 0;font-size:12px}
+.tl5-clock-foot{color:#738073;font-size:12px;line-height:1.6;margin-top:15px}
+@media(max-width:1200px){.tl4-selection-wrap{grid-template-columns:1fr!important}.tl5-expanded.tl4-selection-wrap{grid-template-columns:minmax(0,1.5fr) minmax(260px,.7fr)!important}.tl5-clock-grid{grid-template-columns:1fr}.tl5-clock-face{min-height:410px}.tl5-clock-reading{font-size:clamp(75px,13vw,140px)}}
+@media(max-width:900px){.tl5-expanded.tl4-selection-wrap{grid-template-columns:1fr!important}.tl5-expanded .tl4-pitch{width:100%;min-width:690px}.tl5-expanded .tl4-pool-list{max-height:300px}.tl5-datebox{margin-left:auto}}
+@media(max-width:640px){
+ .tl3-hero{min-height:0}.tl3-crestwrap{width:106px!important;height:106px!important;flex-basis:106px;border-radius:18px!important}
+ .tl3-placeholder{font-size:57px}.tl3-hero-label{display:none}
+ .tl5-datebox{min-width:0;margin:9px 0 0 auto}.tl5-datebox>span{font-size:10px;max-width:130px}.tl5-datebox strong{font-size:26px}
+ .tl4-pitch{width:690px;min-width:690px}.tl5-expanded .tl4-pitch-shell{padding:14px}
+ .tl5-expanded.tl4-selection-wrap{padding:10px!important}.tl5-expanded .tl4-pitch-heading{top:-10px}.tl5-expanded .tl4-selection-side{grid-template-columns:1fr}
+ .tl5-clock-panel{padding:12px;border-radius:14px}.tl5-clock-grid{gap:10px}
+ .tl5-clock-head{padding:7px 6px 16px}.tl5-clock-head h2{font-size:24px}.tl5-clock-fixture{width:100%;max-width:none}
+ .tl5-clock-face{border-radius:12px;padding:18px 13px;min-height:380px}
+ .tl5-clock-reading{font-size:clamp(56px,13vw,90px);letter-spacing:-.06em;padding:32px 0 18px}
+ .tl5-clock-controls{grid-template-columns:1.3fr 1fr;gap:7px}
+ .tl5-clock-controls button{min-height:60px;font-size:12px}
+ .tl5-clock-controls button:last-child{grid-column:span 2;min-height:45px}
+ .tl5-clock-main{font-size:17px!important}.tl5-clock-setting{padding:15px}
+}
+@media(prefers-reduced-motion:reduce){.tl5-clock-progress>div{transition:none}}
