@@ -1,6 +1,7 @@
 /* Touchline Motion Studio V2 — two-sided rugby animation designer */
 (function(){
 'use strict';
+const W=window;
 const previousRender=render, X=window;
 let selectedSide='attack', selectedNumber=1, dragging=null, playing=false, requestId=0, timeAt=0, playhead=0, speed=1, loop=false, showTrails=true, lastMoveId='', prevTime=0;
 const MAX=24;
