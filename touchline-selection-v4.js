@@ -50,6 +50,7 @@ function pitchCard(k){
  '<span class="tl4-number">'+k+'</span><span class="tl4-slot-info"><strong>'+esc(role(k))+'</strong><span>'+esc(p?.name||'Tap to select')+'</span></span></div>';
 }
 function selectionPage(){
+ if(!state.positionSchemaV4)migrate();
  const m=match(),activeKeys=ids(),used=new Set([...Object.values(state.selection||{}),...state.bench]),available=state.players.filter(p=>!used.has(p.id));
  const bench=state.bench.map((id,i)=>'<div draggable="true" data-player="'+esc(id)+'" class="tl4-sub"><span>SUB '+(i+1)+'</span><strong>'+esc(player(id)?.name||'Player')+'</strong><button type="button" data-bench-remove="'+esc(id)+'" aria-label="Remove substitute">×</button></div>').join('');
  const roster=available.map(p=>'<button draggable="true" data-player="'+esc(p.id)+'" data-pick="'+esc(p.id)+'" type="button" class="tl4-roster-player '+(selectedPlayer===p.id?'chosen':'')+'"><strong>'+esc(p.name)+'</strong><span>#'+p.primary+' · '+esc(role(p.primary))+'</span></button>').join('');
