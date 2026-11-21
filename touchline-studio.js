@@ -2,7 +2,7 @@
 /* Touchline Coaching Studio | local-first extension. No external calls or personal-data transfers. */
 (function(){
 'use strict';
-const baseRender=render,baseSelection=selection,baseWire=wire,baseMatchView=matchView,baseInsights=insights,baseStoreLineup=storeLineup;
+const baseSelection=selection,baseMatchView=matchView,originalMatchStats=matchStats;
 const copy=x=>JSON.parse(JSON.stringify(x));
 const clamp=(n,a,b)=>Math.min(b,Math.max(a,n));
 const periodsOf={single:1,halves:2,thirds:3,quarters:4};
@@ -90,7 +90,7 @@ function renderTrails(p){
  const index=frameIndex(p);if(index<1)return '';
  const prev=p.frames[index-1].positions,now=p.frames[index].positions;
  let lines='';
- for(let i=1;i<=size();i++){const a=prev[i],b=now[i];if(!a||!b||Math.hypot(a.x-b.x,a.y-b.y)<2)returnLine: {continue}
+ for(let i=1;i<=size();i++){const a=prev[i],b=now[i];if(!a||!b||Math.hypot(a.x-b.x,a.y-b.y)<2)continue;
  lines+='<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="#ffffff9e" stroke-width=".5" stroke-dasharray="1.1 1.1"/>';}
  return '<svg class="trails" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'+lines+'</svg>';
 }
@@ -137,6 +137,20 @@ function attachTacticDrag(){
   });
  });
 }
+
+/* Every period contributes to season selection counts, without double counting a player within a fixture. */
+matchStats=function(){
+ const stats=originalMatchStats();
+ for(const row of stats.rows){
+  row.apps=state.fixtures.filter(f=>f.type==='Match').filter(f=>{
+   const pl=state.periodPlans?.[f.id];
+   const selections=pl?.periods?.slice(0,periodsOf[pl.mode]||1)
+     ||[state.lineups?.[f.id]||(f.id===state.matchId?{selection:state.selection,bench:state.bench}:{selection:{},bench:[]})];
+   return selections.some(q=>Object.values(q.selection||{}).includes(row.id)||(q.bench||[]).includes(row.id));
+  }).length;
+ }
+ return stats;
+};
 /* Attendance: recorded yes/no only form the denominator, unrecorded stays separate. */
 let attendancePlayer='all',attendanceKind='all',attendanceView='register';
 function attPct(yes,recorded){return recorded?Math.round(yes*100/recorded):null}
