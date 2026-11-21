@@ -61,4 +61,5 @@ home=function(){
  '</div>';
 };
 window.touchlineHomeVersion='5.0';
+render();
 })();
