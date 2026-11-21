@@ -21,7 +21,7 @@ function role(number){
 }
 const fifteen={
  1:[24,16],2:[50,16],3:[76,16],4:[39,29],5:[61,29],6:[15,41],7:[85,41],8:[50,43],
- 9:[45,54],10:[59,61],11:[15,81],12:[69,70],13:[81,79],14:[89,91],15:[49,91]
+ 9:[44,55],10:[60,65],11:[15,86],12:[71,75],13:[82,85],14:[89,95],15:[49,93]
 };
 function selectionPoints(){
  const ids=positions();const out={};
@@ -47,7 +47,17 @@ function defaultScene(){
    else if(id===14)d[id]={x:89,y:94};
    else {const index=ids.filter(k=>![11,14,15].includes(k)).indexOf(id);d[id]={x:70+(index%2)*9,y:9+Math.floor(index/2)*15+(index%2)*5}}
  });
- return {attack:a,defence:d,ball:{x:45,y:51}};
+ const stage={attack:a,defence:d,ball:{x:45,y:51}},taken=[];
+ for(const side of ['attack','defence'])for(const id of ids){
+  const original=stage[side][id];let p={...original};
+  const available=q=>taken.every(other=>Math.hypot(q.x-other.x,q.y-other.y)>=8);
+  if(!available(p)){let solved=false;for(let radius=2;radius<=40&&!solved;radius+=2)for(let j=0;j<32;j++){
+    const angle=2*Math.PI*j/32,trial={x:clamp(p.x+radius*Math.cos(angle),6,94),y:clamp(p.y+radius*Math.sin(angle),6,94)};
+    if(available(trial)){p=trial;solved=true;break}
+  }}
+  stage[side][id]=p;taken.push(p);
+ }
+ return stage;
 }
 function setScrum(out,side,where){
  const ids=positions(),y=where==='left'?26:where==='right'?74:50,front=side==='attack'?47:53,dir=side==='attack'?-1:1;
