@@ -182,3 +182,6 @@ body.tl6-image-open,body.tl6-crop-open{overflow:hidden}
  .tl6-image-picture img{max-height:67dvh}
  .tl6-image-buttons .btn{flex:1}
 }
+
+/* The playing surface is always rugby-field green, regardless of club brand colours. */
+.tl4-pitch{background:repeating-linear-gradient(90deg,#327d45 0%,#327d45 12.5%,#3a884e 12.5%,#3a884e 25%)!important}
