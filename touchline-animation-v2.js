@@ -9,15 +9,11 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 const escapeText=v=>esc(v);
 const clock=()=>performance.now();
 function defaultFormation(n,side){
-  const out={};const attackers=side==='attack';
-  const core=Math.min(8,n);
-  for(let i=1;i<=n;i++){
-    let x,y;
-    if(i<=core){x=attackers?23+(i%3)*4:54+(i%3)*4;y=29+Math.floor((i-1)/3)*15+(i%3)*3}
-    else {const j=i-core,wide=n-core;x=(attackers?31:62)+j*(attackers?51:27)/Math.max(1,wide);y=26+(j%3)*18}
-    out[i]={x:clamp(x,5,95),y:clamp(y,8,92)};
-  }return out;
+ const scene=W.touchlineAgeScene?.();
+ if(scene)return JSON.parse(JSON.stringify(scene[side]));
+ const out={};for(let i=1;i<=n;i++)out[i]={x:20+5*(i%5),y:15+Math.floor((i-1)/5)*30};return out;
 }
+
 function activeMove(){
  state.plays??=[];if(!Array.isArray(state.plays))state.plays=[];
  if(!state.plays.length)state.plays.push({id:uid('play'),name:'New attacking move',description:'',frames:[{positions:defaultFormation(size(),'attack'),opposition:defaultFormation(size(),'defence'),ball:{x:33,y:54}}]});
@@ -26,11 +22,17 @@ function activeMove(){
  for(const f of p.frames){
    if(!f.positions||typeof f.positions!=='object')f.positions=defaultFormation(size(),'attack');
    if(!f.opposition||typeof f.opposition!=='object')f.opposition=defaultFormation(size(),'defence');
-   if(!f.ball||!Number.isFinite(Number(f.ball.x))||!Number.isFinite(Number(f.ball.y))){
-      const q=f.positions[9]||f.positions[1]||{x:35,y:50};
-      f.ball={x:q.x+2,y:q.y};
+   const ids=W.touchlineAgePositions?.()||Array.from({length:size()},(_,j)=>j+1);
+   if(!p.ageSchemaV4 && state.code==='Union' && (state.age==='U12'||state.age==='U13')){
+     const a={...f.positions},d={...f.opposition};const aa={},dd={};
+     ids.forEach((id,j)=>{aa[id]=a[j+1]||a[id]||defaultFormation(size(),'attack')[id];dd[id]=d[j+1]||d[id]||defaultFormation(size(),'defence')[id]});
+     f.positions=aa;f.opposition=dd;
    }
+   const def=W.touchlineAgeScene?.()||{attack:{},defence:{}};
+   ids.forEach(id=>{f.positions[id]??=def.attack[id]||{x:30,y:50};f.opposition[id]??=def.defence[id]||{x:72,y:50}});
+   if(!f.ball||!Number.isFinite(Number(f.ball.x))||!Number.isFinite(Number(f.ball.y)))f.ball={x:45,y:51};
  }
+ p.ageSchemaV4=true;
  return p;
 }
 function frameCount(){return activeMove().frames.length}
@@ -45,7 +47,7 @@ function mix(a,b,t){return a+(b-a)*t}
 function interpolated(t){
  const p=activeMove(),last=p.frames.length-1,step=clamp(Math.floor(t),0,last-1),u=last===0?0:clamp(t-step,0,1),a=frameAt(step),b=frameAt(Math.min(last,step+1));
  const r={attack:{},defence:{},ball:{}};
- for(const side of ['attack','defence'])for(let i=1;i<=size();i++){
+ for(const side of ['attack','defence'])for(const i of (W.touchlineAgePositions?.()||Array.from({length:size()},(_,j)=>j+1))){
   const q=pos(a,side,i),w=pos(b,side,i);
   r[side][i]={x:mix(q.x,w.x,u),y:mix(q.y,w.y,u)};
  }
@@ -75,8 +77,8 @@ function marker(side,i,point){
  return '<button type="button" class="tl2-dot '+side+(selected?' is-selected':'')+'" data-side="'+side+'" data-number="'+i+'" aria-label="Move '+name+'" style="left:'+point.x+'%;top:'+point.y+'%">'+tag+'</button>';
 }
 function board(){const f=interpolated(playhead);let dots='';
- for(let i=1;i<=size();i++)dots+=marker('defence',i,f.defence[i]);
- for(let i=1;i<=size();i++)dots+=marker('attack',i,f.attack[i]);
+ for(const i of (W.touchlineAgePositions?.()||Array.from({length:size()},(_,j)=>j+1)))dots+=marker('defence',i,f.defence[i]);
+ for(const i of (W.touchlineAgePositions?.()||Array.from({length:size()},(_,j)=>j+1)))dots+=marker('attack',i,f.attack[i]);
  dots+=marker('ball',0,f.ball);
  return '<div class="tl2-pitch" id="tl2Pitch" role="group" aria-label="Editable rugby tactics pitch">'+
  '<div class="tl2-fieldlines"><div class="tl2-tryline left"></div><div class="tl2-tryline right"></div><div class="tl2-twenty left"></div><div class="tl2-twenty right"></div><div class="tl2-half"></div><div class="tl2-sideline top"></div><div class="tl2-sideline bottom"></div><div class="tl2-centre"></div></div>'+
@@ -145,6 +147,23 @@ X.tl2Delete=function(){if(!confirm('Delete this move and every animation step?')
 X.tl2Choose=function(id){pause();if(!state.plays.some(p=>p.id===id))return;state.activePlay=id;state.activeFrame=0;playhead=0;save();render()};
 X.tl2SaveMeta=function(key,value){if(!['name','description'].includes(key))return;activeMove()[key]=String(value).slice(0,key==='name'?100:800);save()};
 X.tl2Fullscreen=function(){const el=document.getElementById('tl2Pitch');if(!el)return;if(!document.fullscreenElement&&el.requestFullscreen)el.requestFullscreen().catch(()=>{});else if(document.exitFullscreen)document.exitFullscreen()};
+
+function touchlineFindFree(pitch,el,x,y){
+ if(el.dataset.side==='ball')return {x,y};
+ const rect=pitch.getBoundingClientRect();
+ const others=[...pitch.querySelectorAll('.tl2-dot')].filter(node=>node!==el&&node.dataset.side!=='ball').map(node=>({
+  x:parseFloat(node.style.left),y:parseFloat(node.style.top)
+ })).filter(q=>Number.isFinite(q.x)&&Number.isFinite(q.y));
+ const min=Math.max(26,el.getBoundingClientRect().width+5);
+ const good=(a,b)=>others.every(q=>Math.hypot((a-q.x)*rect.width/100,(b-q.y)*rect.height/100)>=min);
+ if(good(x,y))return {x,y};
+ for(let rad=1;rad<=55;rad+=2)for(let k=0;k<24;k++){
+   const angle=(Math.PI*2*k/24),xx=clamp(x+rad*Math.cos(angle),4,96),yy=clamp(y+rad*Math.sin(angle),6,94);
+   if(good(xx,yy))return {x:xx,y:yy};
+ }
+ return {x:clamp(parseFloat(el.style.left)||x,4,96),y:clamp(parseFloat(el.style.top)||y,6,94)};
+}
+
 function attach(){
  const pitch=document.getElementById('tl2Pitch');if(!pitch)return;
  pitch.querySelectorAll('[data-side]').forEach(el=>{
@@ -160,7 +179,8 @@ function attach(){
   });
   el.addEventListener('pointermove',ev=>{
    if(!dragging||dragging.el!==el||ev.pointerId!==dragging.pointer)return;
-   const r=pitch.getBoundingClientRect();const viewX=clamp(100*(ev.clientX-r.left)/r.width,4,96),viewY=clamp(100*(ev.clientY-r.top)/r.height,6,94);
+   const r=pitch.getBoundingClientRect();const targetX=clamp(100*(ev.clientX-r.left)/r.width,4,96),targetY=clamp(100*(ev.clientY-r.top)/r.height,6,94);
+   const safe=touchlineFindFree(pitch,el,targetX,targetY);const viewX=safe.x,viewY=safe.y;
    const point=sourcePoint(viewX,viewY);const f=frameAt(dragging.idx),q=pos(f,dragging.side,dragging.n);q.x=+point.x.toFixed(2);q.y=+point.y.toFixed(2);
    const visible=displayPoint(q);el.style.left=visible.x+'%';el.style.top=visible.y+'%';
   });
