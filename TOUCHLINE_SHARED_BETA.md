@@ -1,3 +1,35 @@
+# Touchline Live Beta — provisioned 21 November 2026
+
+## Current verified status
+
+- **Created** dedicated London project `touchline-rugby-beta` in HFI2026's Org (free project, quoted $0/month).
+- **Installed** four isolated Touchline tables, checked workspace/member RLS, database grants and private invitation RPCs.
+- **Enabled** Realtime publication on `touchline_updates`, a protected version-only signal that avoids broadcasting children's information.
+- **Connected** GitHub Pages JavaScript to the actual Supabase API URL with a **publishable** browser key, never a service-role credential.
+- **Verified on the database itself**, using temporary transaction data that was rolled back: owner/editor writes, version conflict checks, one-use invitations, viewer read-only restriction, uninvited-user denial, maximum four users, version update trigger and metadata-only notifications.
+- **Verified** GitHub Pages successful deployment history. A current later publish was still being processed at last check.
+- **NOT YET VERIFIED**: four real-device sign-ins / WebSocket subscriptions and in-browser interactive end-to-end behaviour.
+
+## Two dashboard settings required before outside testers can sign in
+
+1. **Authentication → URL Configuration**:
+   https://supabase.com/dashboard/project/jwwqkrrvcwtunumoqzmq/auth/url-configuration
+   Set Site URL to `https://hfi2026.github.io/Touchline-Rugby/`.
+   Add `https://hfi2026.github.io/Touchline-Rugby/**` as an allowed Redirect URL.
+2. **Authentication → SMTP settings**:
+   https://supabase.com/dashboard/project/jwwqkrrvcwtunumoqzmq/auth/smtp
+   Connect an authenticated SMTP provider and verify its sending address/domain. Supabase's default sender can only send to organisation-authorised addresses and currently allows only two messages per hour. It cannot support four external testers.
+
+Do not turn off email verification to work around SMTP. Do not grant testers Supabase organisation membership to make them eligible for the default email sender.
+
+## After configuring those two settings
+
+Open https://hfi2026.github.io/Touchline-Rugby/ in Safari, sign in via email magic link, select **Team access → Create shared team**, and distribute three **one-use** coach invitations to the other testers. Each tester opens their link, signs in on the same browser, and joins. Select “editor” for coaches; “viewer” for a spectator. Wait for the status **Live · All changes saved** before relying on cross-device changes.
+
+The first imported workspace takes its squad/fixtures from the creator's current device. Use anonymised players only for this beta. The database starts empty intentionally; it does not silently copy demo or old personal data until the owner explicitly creates the shared workspace.
+
+---
+
 # Touchline shared beta — 3–4 testers, live updates
 
 ## Current deployment status
