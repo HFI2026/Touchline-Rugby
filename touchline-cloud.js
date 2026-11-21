@@ -246,8 +246,8 @@ async function chooseWorkspace(id,knownRole=null){
   setStatus('connecting');
   const roomLabel=document.getElementById('tl-live-room');if(roomLabel)roomLabel.textContent=data.club_name;
   channel=client.channel('touchline-room-'+id).on('postgres_changes',
-    {event:'UPDATE',schema:'public',table:'touchline_workspaces',filter:'id=eq.'+id},
-    payload=>handleRemote(payload.new)).subscribe((subStatus)=>{
+    {event:'UPDATE',schema:'public',table:'touchline_updates',filter:'workspace_id=eq.'+id},
+    payload=>{if(Number(payload.new?.version)>version)refresh(true)}).subscribe((subStatus)=>{
       if(subStatus==='CHANNEL_ERROR'||subStatus==='TIMED_OUT'){setStatus('offline','Live channel interrupted; reconnecting and checking for updates.')}
       if(subStatus==='SUBSCRIBED'&&!conflicted&&!localQueued)setStatus(role==='viewer'?'viewer':'connected');
     });
