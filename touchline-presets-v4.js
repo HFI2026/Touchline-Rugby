@@ -6,7 +6,7 @@ const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
 const clone=o=>JSON.parse(JSON.stringify(o));
 const allIds=()=>W.touchlineAgePositions();
 function separate(scene){
- const used=[];const min=7.6;
+ const used=[];const min=10;
  for(const side of ['attack','defence']){
    for(const id of allIds()){
      const initial=scene[side][id]||{x:side==='attack'?30:70,y:50};
