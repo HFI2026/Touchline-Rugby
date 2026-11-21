@@ -7,16 +7,15 @@ const copy=o=>JSON.parse(JSON.stringify(o));
 function fixLineup(l,oldKeys,newKeys,legacy=false){
  if(!l)return;
  const before=l.selection||{},used=new Set(),after={},bench=(l.bench||[]).slice();
- if(legacy){
-   oldKeys.forEach((k,i)=>{const playerId=before[k];if(playerId&&!used.has(playerId)&&newKeys[i]!==undefined){after[newKeys[i]]=playerId;used.add(playerId)}});
- }else{
-   newKeys.forEach(k=>{const playerId=before[k];if(playerId&&!used.has(playerId)){after[k]=playerId;used.add(playerId)}});
-   const remaining=Object.entries(before).filter(([k,v])=>v&&!used.has(v));
-   const gaps=newKeys.filter(k=>!after[k]);
-   remaining.forEach(([k,v],i)=>{if(gaps[i]!=null){after[gaps[i]]=v;used.add(v)}});
- }
- Object.values(before).filter(v=>v&&!used.has(v)).forEach(v=>bench.push(v));
- l.selection=after;l.bench=[...new Set(bench.filter(v=>v&&!used.has(v)))];
+ // Safe migration: keep a player only when their existing rugby position
+ // still exists. Never silently assign a flanker or back to a front-row slot.
+ newKeys.forEach(k=>{const id=before[k];if(id&&!used.has(id)){after[k]=id;used.add(id)}});
+ Object.entries(before).forEach(([key,id])=>{
+  if(id&&!used.has(id)){bench.push(id);used.add(id)}
+ });
+ l.selection=after;
+ const starters=new Set(Object.values(after));
+ l.bench=[...new Set(bench.filter(id=>id&&!starters.has(id)))];
 }
 function migrate(){
  if(state.positionSchemaV4)return;
