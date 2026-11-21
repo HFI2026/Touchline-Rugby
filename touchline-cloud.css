@@ -59,3 +59,5 @@ body.tl-live-auth-locked .app{filter:blur(4px);pointer-events:none}
 }
 
 #tl-live-status[data-status="polling"] i{background:#bd8839;box-shadow:0 0 0 3px #f0e5c8}
+
+body.tl-live-offline #view button:not([onclick^="setPage("]),body.tl-live-offline #view input,body.tl-live-offline #view textarea,body.tl-live-offline #view select{pointer-events:none!important;opacity:.62!important}
