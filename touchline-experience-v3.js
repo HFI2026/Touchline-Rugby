@@ -2,7 +2,7 @@
 (function(){
 'use strict';
 const win=window, oldRender=render, oldHome=home;
-let expanded=false,vertical=false,lastPage='home';
+let expanded=false,vertical=false,lastPage='home';win.touchlinePitchOrientation='landscape';
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
 const clone=x=>JSON.parse(JSON.stringify(x));
 function wholeTeam(n,side='attack'){
@@ -99,7 +99,7 @@ win.tl3Preset=function(id){
  frame.positions=clone(model.attack);frame.opposition=clone(model.defence);frame.ball=clone(model.ball);
  p.preset=id;save();render();
 };
-win.tl3Orientation=function(){vertical=!vertical;document.querySelector('.tl2-panel')?.classList.toggle('tl3-vertical',vertical);const b=document.getElementById('tl3Rotate');if(b)b.textContent=vertical?'↔ Landscape pitch':'↕ Portrait pitch'};
+win.tl3Orientation=function(){vertical=!vertical;win.touchlinePitchOrientation=vertical?'portrait':'landscape';render();};
 win.tl3Expand=function(){
  const panel=document.querySelector('.tl2-panel');if(!panel)return;
  expanded=!expanded;panel.classList.toggle('tl3-expanded',expanded);document.body.classList.toggle('tl3-editor-active',expanded);
