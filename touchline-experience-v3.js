@@ -131,7 +131,7 @@ function decorate(){
   const empty=document.createElement('option');empty.value='';empty.textContent='Choose a formation preset';select.appendChild(empty);
   choices.forEach(([title,items])=>{const group=document.createElement('optgroup');group.label=title;items.forEach(([value,text])=>{const opt=document.createElement('option');opt.value=value;opt.textContent=text;group.appendChild(opt)});select.appendChild(group)});
   select.onchange=e=>{if(e.target.value)win.tl3Preset(e.target.value);e.target.value=''};
-  wrap.append(label,select);bar?.insertAdjacentElement('afterend',wrap);
+  wrap.append(label,select);const note=document.createElement('div');note.className='tl3-presetnote';note.textContent=size()<15?'Coaching templates are illustrative; check your age-grade scrum and line-out rules before using them.':'Coach-editable 15-a-side templates based on rugby roles and common shapes, not compulsory fixed coordinates.';wrap.appendChild(note);bar?.insertAdjacentElement('afterend',wrap);
  }
 }
 function welcome(){
