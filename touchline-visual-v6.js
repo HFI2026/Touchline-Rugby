@@ -210,9 +210,8 @@ function makeCanvasImage(){
  ctx.save();roundRect(ctx,field.x,field.y,field.w,field.h,14);ctx.clip();
  fill(ctx,'#36824b',field.x,field.y,field.w,field.h);
  for(let i=0;i<9;i++)if(i%2===0)fill(ctx,'#ffffff0b',field.x+i*field.w/9,field.y,field.w/9,field.h);
- ctx.strokeStyle='#ffffffa8';ctx.lineWidth=3;ctx.strokeRect(field.x+25,field.y+22,field.w-50,field.h-44);
- ctx.beginPath();for(const frac of [.10,.25,.50,.75,.90]){const y=field.y+field.h*frac;ctx.moveTo(field.x+25,y);ctx.lineTo(field.x+field.w-25,y)}ctx.stroke();
- ctx.fillStyle='#ffffffb9';ctx.textAlign='center';ctx.font='700 17px system-ui';ctx.fillText('OPPOSITION GOAL LINE',field.x+field.w/2,field.y+64);
+ // The team sheet is a clean green formation board; field markings are deliberately omitted.
+ ctx.fillStyle='#f4f9eddd';ctx.textAlign='center';ctx.font='800 17px system-ui';ctx.fillText('↑  ATTACKING DIRECTION',field.x+field.w/2,field.y+55);
  const onlyNumber=mode==='numbers';
  for(const n of keys){
   const q=coords[n]||{x:50,y:50},x=field.x+q.x/100*field.w,y=field.y+q.y/100*field.h;
