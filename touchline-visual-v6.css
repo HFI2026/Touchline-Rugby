@@ -161,3 +161,24 @@
  .tl5-home-tile-icon{width:58px!important;height:58px!important}
  .tl5-home-tile-icon svg{width:42px!important;height:42px!important}
 }
+
+
+/* Saved team-sheet image preview */
+body.tl6-image-open,body.tl6-crop-open{overflow:hidden}
+.tl6-image-modal{position:fixed;inset:0;z-index:1450;background:#10251de8;display:grid;place-items:center;padding:14px;overflow:auto;overscroll-behavior:contain}
+.tl6-image-sheet{width:min(760px,100%);max-height:95dvh;display:flex;flex-direction:column;gap:12px;background:#fffefa;border:1px solid #e4e5d9;border-radius:19px;padding:17px;box-shadow:0 22px 80px #03160ba0}
+.tl6-image-bar{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.tl6-image-bar h2{font-size:22px;letter-spacing:-.7px;margin:0 0 4px;color:#213a2c}
+.tl6-image-bar p{margin:0;color:#68786c;font-size:12px;line-height:1.4}
+.tl6-image-bar>button{border:0;background:#eff1e8;border-radius:9px;color:#233b2c;font-size:24px;width:39px;height:39px;flex-shrink:0;cursor:pointer}
+.tl6-image-picture{flex:1;min-height:0;overflow:auto;display:grid;place-items:center;background:#e7ebe4;padding:12px;border-radius:12px}
+.tl6-image-picture img{max-width:100%;max-height:min(65dvh,780px);object-fit:contain;box-shadow:0 5px 18px #19342625}
+.tl6-image-buttons{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.tl6-image-buttons .btn{min-height:42px}
+@media(max-width:640px){
+ .tl6-image-modal{padding:8px}
+ .tl6-image-sheet{padding:12px;border-radius:13px;max-height:97dvh}
+ .tl6-image-picture{padding:7px}
+ .tl6-image-picture img{max-height:67dvh}
+ .tl6-image-buttons .btn{flex:1}
+}
