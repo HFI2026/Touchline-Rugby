@@ -50,7 +50,7 @@ function defaultScene(){
  const stage={attack:a,defence:d,ball:{x:45,y:51}},taken=[];
  for(const side of ['attack','defence'])for(const id of ids){
   const original=stage[side][id];let p={...original};
-  const available=q=>taken.every(other=>Math.hypot(q.x-other.x,q.y-other.y)>=8);
+  const available=q=>taken.every(other=>Math.hypot(q.x-other.x,q.y-other.y)>=10);
   if(!available(p)){let solved=false;for(let radius=2;radius<=40&&!solved;radius+=2)for(let j=0;j<32;j++){
     const angle=2*Math.PI*j/32,trial={x:clamp(p.x+radius*Math.cos(angle),6,94),y:clamp(p.y+radius*Math.sin(angle),6,94)};
     if(available(trial)){p=trial;solved=true;break}
