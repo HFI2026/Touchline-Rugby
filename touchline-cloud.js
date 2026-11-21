@@ -166,7 +166,7 @@ function updateRoomPanel(){
       const btn=target.querySelector('#tl-live-join');btn.disabled=true;
       try {
         const {data,error}=await client.rpc('touchline_join_workspace',{_code:code});
-        if(error)throw error;pendingInvite=null;sessionStorage.removeItem('tl-pending-invite');await chooseWorkspace(data);panel.remove();
+        if(error)throw error;pendingInvite=null;localStorage.removeItem('tl-pending-invite');await chooseWorkspace(data);panel.remove();
       }catch(err){notice('Could not join: '+err.message,'warning');btn.disabled=false}
     };
     return;
@@ -392,9 +392,9 @@ async function bootstrap(){
  const inviteMatch=new URLSearchParams(location.hash.replace(/^#/,''));
  const code=inviteMatch.get('invite');
  if(code && /^[0-9a-f]{36}$/i.test(code)){
-   pendingInvite=code;try{sessionStorage.setItem('tl-pending-invite',code)}catch(e){}
+   pendingInvite=code;try{localStorage.setItem('tl-pending-invite',JSON.stringify({code,expires:Date.now()+86400000}))}catch(e){}
    try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
- } else {try{pendingInvite=sessionStorage.getItem('tl-pending-invite')}catch(e){}}
+ } else {try{const saved=JSON.parse(localStorage.getItem('tl-pending-invite')||'null');if(saved?.expires>Date.now())pendingInvite=saved.code;else localStorage.removeItem('tl-pending-invite')}catch(e){}}
 
  if(!ready){setStatus('setup','Cloud credentials are not yet configured.');return}
   try{
