@@ -11,7 +11,7 @@ const main=document.querySelector('.main');
 let client=null,user=null,workspace=null,role=null,channel=null;
 let baseline=null,baselineJson='',localQueued=null,version=0,flushing=false,conflicted=false;
 let flushTimer=0,refreshTimer=0,poller=0,status='setup',incomingVersion=0;
-let activityStamp=0;
+let activityStamp=0,channelConnected=false;
 let pendingInvite=null;
 const pagesWithPrivateData=true;
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -69,7 +69,7 @@ function setStatus(next,detail=''){
   const t=document.getElementById('tl-live-status'),message=document.getElementById('tl-live-label');
   if(t){t.dataset.status=next;t.title=detail||next}
   if(message)message.textContent=({connected:'Live · All changes saved',saving:'Syncing…',queued:'Changes waiting to sync',
-    offline:'Offline · changes not shared',conflict:'Edit conflict — review needed',
+    offline:'Offline · changes not shared',polling:'Connected · checking for updates',conflict:'Edit conflict — review needed',
     connecting:'Connecting…',login:'Sign in for shared data',setup:'Live setup required',
     viewer:'Live · View only',error:'Sync unavailable'})[next]||next;
   if(detail&&['error','conflict','offline'].includes(next))notice(detail,'warning');
@@ -232,7 +232,7 @@ async function loadMembership(){
 }
 async function chooseWorkspace(id,knownRole=null){
   if(!id)throw new Error('Missing shared workspace');
-  if(channel){await client.removeChannel(channel);channel=null}
+  if(channel){await client.removeChannel(channel);channel=null;channelConnected=false}
   const {data,error}=await client.from('touchline_workspaces').select('*').eq('id',id).single();
   if(error)throw error;
   const {data:member,error:memberError}=await client.from('touchline_members').select('role').eq('workspace_id',id).eq('user_id',user.id).single();
@@ -248,8 +248,8 @@ async function chooseWorkspace(id,knownRole=null){
   channel=client.channel('touchline-room-'+id).on('postgres_changes',
     {event:'UPDATE',schema:'public',table:'touchline_updates',filter:'workspace_id=eq.'+id},
     payload=>{if(Number(payload.new?.version)>version)refresh(true)}).subscribe((subStatus)=>{
-      if(subStatus==='CHANNEL_ERROR'||subStatus==='TIMED_OUT'){setStatus('offline','Live channel interrupted; reconnecting and checking for updates.')}
-      if(subStatus==='SUBSCRIBED'&&!conflicted&&!localQueued)setStatus(role==='viewer'?'viewer':'connected');
+      if(subStatus==='CHANNEL_ERROR'||subStatus==='TIMED_OUT'){channelConnected=false;setStatus('polling','Live channel interrupted. Changes are checked periodically.')} 
+      if(subStatus==='SUBSCRIBED'){channelConnected=true;if(!conflicted&&!localQueued)setStatus(role==='viewer'?'viewer':'connected')}
     });
   updateRoomPanel();updateLock();
 }
@@ -324,7 +324,7 @@ async function handleRemote(row){
    baseline=remote;baselineJson=documentString(remote);version=newer;
    mergeServerState(remote);
    activityStamp=Date.parse(row.updated_at||new Date().toISOString());
-   setStatus(role==='viewer'?'viewer':'connected');return;
+   setStatus(role==='viewer'?'viewer':channelConnected?'connected':'polling');return;
  }
  const {merged,errors}=threeWay(baseline,local,remote);
  baseline=remote;baselineJson=documentString(remote);version=newer;
@@ -349,7 +349,7 @@ async function refresh(force=false,discard=false){
    setStatus(role==='viewer'?'viewer':'connected');return;
   }
   await handleRemote(data);
-  if(!conflicted&&!localQueued)setStatus(role==='viewer'?'viewer':'connected');
+  if(!conflicted&&!localQueued)setStatus(role==='viewer'?'viewer':channelConnected?'connected':'polling');
  }catch(err){setStatus('offline','Could not reach the shared team: '+err.message)}
 }
 function scheduleSave(delay=260){
@@ -377,7 +377,7 @@ async function flush(){
     baseline=desired;baselineJson=documentString(desired);version=Number(data.version);
     localQueued=equal(currentLocal(),desired)?null:currentLocal();
     activityStamp=now();
-    if(localQueued){setStatus('queued')}else setStatus('connected');
+    if(localQueued){setStatus('queued')}else setStatus(channelConnected?'connected':'polling');
   }
  }catch(err){localQueued=currentLocal();setStatus('offline','Not saved yet. Reconnect to sync. '+err.message)}
  finally {
@@ -407,7 +407,7 @@ async function bootstrap(){
     user=session?.user||null;
     showAuthPanel();
     if(!user){
-      if(channel){client.removeChannel(channel);channel=null}
+      if(channel){client.removeChannel(channel);channel=null;channelConnected=false}
       role=null;workspace=null;localQueued=null;baseline=null;baselineJson='';
       setStatus('login');updateRoomPanel();return;
     }
