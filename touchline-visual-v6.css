@@ -73,7 +73,7 @@
 .tl4-slot-info>span{font-size:clamp(8px,1.05vw,11px)!important}
 .tl4-slot-info{min-width:0;overflow:hidden}
 .tl4-slot-info strong,.tl4-slot-info>span{white-space:normal;overflow-wrap:break-word;max-height:2.5em;overflow:hidden}
-.tl4-slot{left:var(--tl6-x,50%)!important;top:var(--tl6-y,50%)!important}
+/* Slot coordinates are set inline by the age-grade formation model. */
 .tl4-pitch-heading{justify-content:space-between}
 .tl6-export-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end;width:100%;margin-top:10px}
 .tl6-export-controls select{min-width:150px;max-width:240px;flex:1;font-size:12px}
