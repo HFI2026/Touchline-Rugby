@@ -203,7 +203,7 @@ function makeCanvasImage(){
  ctx.textAlign='left';ctx.fillStyle=on;ctx.font='800 21px system-ui';ctx.fillText('TOUCHLINE  /  MATCH DAY',92,63);
  ctx.font='800 51px system-ui';ctx.fillText(String(state.club||'Rugby Club').slice(0,40),92,140,1030);
  ctx.font='600 27px system-ui';ctx.fillText(String(state.team||'Team').slice(0,45),94,186,1030);
- ctx.font='600 20px system-ui';ctx.fillText((f?'vs '+(f.opposition||'Opposition'):'Team selection')+'   •   '+(f?.date||''),94,222,1040);
+ ctx.font='600 20px system-ui';const periodPlan=state.periodPlans?.[f?.id],periodName=periodPlan?.mode==='halves'?'Half':periodPlan?.mode==='thirds'?'Third':periodPlan?.mode==='quarters'?'Quarter':'';const periodText=periodName?'   •   '+periodName+' '+((periodPlan.active||0)+1):'';ctx.fillText((f?'vs '+(f.opposition||'Opposition'):'Team selection')+'   •   '+(f?.date||'')+periodText,94,222,1040);
  fill(ctx,gold,1220,38,138,138,18);
  const field={x:80,y:298,w:1280,h:1275};
  fill(ctx,'#e6eadf',field.x-9,field.y-9,field.w+18,field.h+18,20);
@@ -270,7 +270,7 @@ W.tl6SaveTeamImage=async function(){
    else throw err;
   }
   exportDataUrl=url;
-  const label=(state.club||'Touchline')+'-'+(state.team||'Team')+'-'+(match()?.date||'team-sheet');
+  const p=state.periodPlans?.[match()?.id];const suffix=p&&p.mode!=='single'?'-'+p.mode+'-'+((p.active||0)+1):'';const label=(state.club||'Touchline')+'-'+(state.team||'Team')+'-'+(match()?.date||'team-sheet')+suffix;
   exportName=label.toLowerCase().replace(/[^a-z0-9-]+/g,'-').slice(0,90)+'.png';
   showImagePreview();
  }catch(err){console.error('Team image export',err);alert('Could not generate the image in this browser. Try again after reopening Touchline.')}
