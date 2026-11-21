@@ -1,10 +1,9 @@
-/* Public browser configuration only — never put a service_role or secret key here.
-   This is intentionally unconfigured until a private Supabase project is assigned.
-   To activate, provide the Supabase Project URL and PUBLIC PUBLISHABLE key and set enabled:true.
-   Passwordless login redirect URL: https://hfi2026.github.io/Touchline-Rugby/
-*/
-window.TOUCHLINE_CLOUD_CONFIG = {
-  enabled: false,
-  projectUrl: "",
-  publishableKey: ""
-};
+/* Touchline Live Beta – public Supabase URL and publishable key only.
+ * Row-level security and signed-in team membership protect all shared data.
+ * NEVER add a service-role secret, database password or private token here.
+ */
+window.TOUCHLINE_CLOUD_CONFIG = Object.freeze({
+  enabled: true,
+  projectUrl: "https://jwwqkrrvcwtunumoqzmq.supabase.co",
+  publishableKey: "sb_publishable_F_tjQZR0kWc91mRBiLaRPw_2ezVZL2y"
+});
