@@ -13,7 +13,7 @@ Release date: 21 November 2026
 - Animation starts with age-appropriate non-overlapping attacking and defensive markers; scrum and open-play templates also use the actual age-grade positions. Formed line-outs are disabled for formats that do not use them.
 - Marker dragging on the animator prevents placing one player directly over another. Ball positioning remains independent.
 - Safe lineup migration: an old U13 lineup's positions 6 and 7 are not silently reallocated to new positions. Players in removed slots move to the bench for coach review, with saved lineups and match-period rotations preserved.
-- PWA service-worker cache v9 includes all updated resources and prefers fresh scripts/styles online, with cached offline fallback.
+- PWA service-worker cache v10 includes all updated resources and prefers fresh scripts/styles online, with cached offline fallback.
 
 ## Age-grade data provenance
 
