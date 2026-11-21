@@ -51,8 +51,10 @@ function interpolated(t){
  }
  const z=pos(a,'ball'),v=pos(b,'ball');r.ball={x:mix(z.x,v.x,u),y:mix(z.y,v.y,u)};return r;
 }
+function displayPoint(point){return window.touchlinePitchOrientation==='portrait'?{x:100-point.y,y:point.x}:point;}
+function sourcePoint(x,y){return window.touchlinePitchOrientation==='portrait'?{x:y,y:100-x}:{x,y};}
 function makeTrail(f1,f2,side,i){
- const p=pos(f1,side,i),q=pos(f2,side,i);
+ const p=displayPoint(pos(f1,side,i)),q=displayPoint(pos(f2,side,i));
  if(Math.hypot(p.x-q.x,p.y-q.y)<1)return '';
  const colour=side==='attack'?'#e7e9da':'#ffb5af';
  return '<line x1="'+p.x+'" y1="'+p.y+'" x2="'+q.x+'" y2="'+q.y+'" stroke="'+colour+'" stroke-width=".65" stroke-dasharray="1.7 1.3" opacity=".68"/>';
@@ -63,12 +65,12 @@ function trails(){
  if(i>=p.frames.length-1)return '';
  let paths='';
  for(const side of ['attack','defence'])for(let n=1;n<=size();n++)paths+=makeTrail(p.frames[i],p.frames[i+1],side,n);
- const a=p.frames[i].ball,b=p.frames[i+1].ball;
+ const a=displayPoint(p.frames[i].ball),b=displayPoint(p.frames[i+1].ball);
  if(Math.hypot(a.x-b.x,a.y-b.y)>1)paths+='<line x1="'+a.x+'" y1="'+a.y+'" x2="'+b.x+'" y2="'+b.y+'" stroke="#ffe3a5" stroke-width=".8" stroke-dasharray="2 1.2"/>';
  return '<svg class="tl2-paths" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'+paths+'</svg>';
 }
 function marker(side,i,point){
- const tag=side==='ball'?'●':i,selected=(selectedSide===side && selectedNumber===i);
+ const tag=side==='ball'?'●':i,selected=(selectedSide===side && selectedNumber===i);point=displayPoint(point);
  const name=side==='ball'?'Ball':side==='attack'?'Attacker '+i:'Defender '+i;
  return '<button type="button" class="tl2-dot '+side+(selected?' is-selected':'')+'" data-side="'+side+'" data-number="'+i+'" aria-label="Move '+name+'" style="left:'+point.x+'%;top:'+point.y+'%">'+tag+'</button>';
 }
@@ -105,7 +107,7 @@ function moveDots(mapping){
  const pitch=document.getElementById('tl2Pitch');if(!pitch)return;
  pitch.querySelectorAll('.tl2-dot').forEach(el=>{
   const side=el.dataset.side,num=Number(el.dataset.number),p=side==='ball'?mapping.ball:mapping[side][num];if(!p)return;
-  el.style.left=p.x+'%';el.style.top=p.y+'%';
+  const visible=displayPoint(p);el.style.left=visible.x+'%';el.style.top=visible.y+'%';
  });
  const range=document.getElementById('tl2Seek');if(range)range.value=Math.round(playhead*100);
  const stamp=document.getElementById('tl2Time');if(stamp)stamp.textContent=playhead.toFixed(1)+' / '+(frameCount()-1)+' steps';
@@ -158,9 +160,9 @@ function attach(){
   });
   el.addEventListener('pointermove',ev=>{
    if(!dragging||dragging.el!==el||ev.pointerId!==dragging.pointer)return;
-   const r=pitch.getBoundingClientRect();const x=clamp(100*(ev.clientX-r.left)/r.width,4,96),y=clamp(100*(ev.clientY-r.top)/r.height,6,94);
-   const f=frameAt(dragging.idx),q=pos(f,dragging.side,dragging.n);q.x=+x.toFixed(2);q.y=+y.toFixed(2);
-   el.style.left=q.x+'%';el.style.top=q.y+'%';
+   const r=pitch.getBoundingClientRect();const viewX=clamp(100*(ev.clientX-r.left)/r.width,4,96),viewY=clamp(100*(ev.clientY-r.top)/r.height,6,94);
+   const point=sourcePoint(viewX,viewY);const f=frameAt(dragging.idx),q=pos(f,dragging.side,dragging.n);q.x=+point.x.toFixed(2);q.y=+point.y.toFixed(2);
+   const visible=displayPoint(q);el.style.left=visible.x+'%';el.style.top=visible.y+'%';
   });
   function done(ev){if(!dragging||dragging.el!==el||ev.pointerId!==dragging.pointer)return;dragging=null;save()}
   el.addEventListener('pointerup',done);el.addEventListener('pointercancel',done);
