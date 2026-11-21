@@ -40,13 +40,19 @@ function scrum(map,side,spot){
  return at(ballX,clamp(y+3,6,94));
 }
 function lineout(map,side,wing){
- const n=size(),y=wing==='left'?14:86,dir=wing==='left'?1:-1;
- const base=side==='attack'?43:56;
- const positions=[1,4,5,2,6,7,8,3];
- for(let j=0;j<positions.length;j++){const k=positions[j];if(k>n)continue;map[k]=at(base+(side==='attack'?-1:1)*(j%2)*4,clamp(y+dir*(6+j*5.7),7,93))}
- backs(map,side,{x:base,y:50},wing==='left'?'right':'left');
- if(n>=9)map[9]=at(base+(side==='attack'?-5:5),clamp(y+dir*12,6,94));
- return at(side==='attack'?base-1:base+1,y);
+ const n=size(),atTop=wing==='left',edge=atTop?5:95,dir=atTop?1:-1;
+ const x=side==='attack'?43:57,behind=side==='attack'?-1:1;
+ // Schematic World Rugby law 18 starting point:
+ // #2 typically throws, #9 receiver, nominated jumping/lifting forwards form the line.
+ // Jumper and lifter assignments can vary by team and age group.
+ const inLine=[1,4,5,6,7,8,3];
+ if(n>=2)map[2]=at(x+behind*3,edge);
+ inLine.forEach((k,j)=>{if(k>n)return;map[k]=at(x+behind*(j%2)*3,clamp(edge+dir*(10+j*8),7,93))});
+ if(n>=9)map[9]=at(x+behind*11,clamp(edge+dir*22,7,93));
+ backs(map,side,{x:x+behind*4,y:48},atTop?'right':'left');
+ if(n>=9)map[9]=at(x+behind*11,clamp(edge+dir*22,7,93));
+ if(n>=2)map[2]=at(x+behind*3,edge);
+ return at(x+behind*2,edge);
 }
 function phase(map,side,shape){
  const n=size(),bx=side==='attack'?38:67;
