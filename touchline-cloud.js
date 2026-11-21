@@ -12,6 +12,7 @@ let client=null,user=null,workspace=null,role=null,channel=null;
 let baseline=null,baselineJson='',localQueued=null,version=0,flushing=false,conflicted=false;
 let flushTimer=0,refreshTimer=0,poller=0,status='setup',incomingVersion=0;
 let activityStamp=0;
+let pendingInvite=null;
 const pagesWithPrivateData=true;
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const isObject=o=>o&&typeof o==='object'&&!Array.isArray(o);
@@ -79,7 +80,7 @@ function lock(yes,why=''){
   if(why)notice(why,'warning');
 }
 function updateLock(){
-  const deny=!user||!workspace||conflicted||role==='viewer';
+  const deny=!user||!workspace||conflicted;
   const shell=document.getElementById('tl-live-lock');
   if(shell){
     shell.hidden=!deny;
@@ -156,7 +157,7 @@ function updateRoomPanel(){
     target.innerHTML='<h3>Start your shared test</h3>'+
       '<button id="tl-live-create" class="tl-live-primary">Create shared team from this device</button>'+
       '<div class="tl-live-divider">OR JOIN AN EXISTING TEAM</div>'+
-      '<label>Invitation code<input id="tl-live-invite-code" placeholder="Paste invite code" autocomplete="off"></label>'+
+      '<label>Invitation code<input id="tl-live-invite-code" placeholder="Paste invite code" autocomplete="off" value="'+escapeText(pendingInvite||'')+'"></label>'+
       '<button id="tl-live-join" class="tl-live-primary">Join shared team</button><p class="tl-live-hint">Only an owner can create invitations. Each invitation works for one tester.</p>';
     target.querySelector('#tl-live-create').onclick=createRoom;
     target.querySelector('#tl-live-join').onclick=async()=>{
@@ -164,7 +165,7 @@ function updateRoomPanel(){
       const btn=target.querySelector('#tl-live-join');btn.disabled=true;
       try {
         const {data,error}=await client.rpc('touchline_join_workspace',{_code:code});
-        if(error)throw error;await chooseWorkspace(data);panel.remove();
+        if(error)throw error;pendingInvite=null;sessionStorage.removeItem('tl-pending-invite');await chooseWorkspace(data);panel.remove();
       }catch(err){notice('Could not join: '+err.message,'warning');btn.disabled=false}
     };
     return;
@@ -226,7 +227,7 @@ async function loadMembership(){
   if(!user){workspace=null;role=null;return}
   const {data,error}=await client.from('touchline_members').select('workspace_id,role').eq('user_id',user.id).limit(2);
   if(error)throw error;
-  if(!data?.length){workspace=null;role=null;setStatus('login','Create or join a team through Team access.');return}
+  if(!data?.length){workspace=null;role=null;setStatus('login','Create or join a team through Team access.');if(pendingInvite){showRoomPanel()}return}
   await chooseWorkspace(data[0].workspace_id,data[0].role);
 }
 async function chooseWorkspace(id,knownRole=null){
@@ -241,8 +242,8 @@ async function chooseWorkspace(id,knownRole=null){
   localQueued=null;conflicted=false;
   mergeServerState(baseline);
   activityStamp=Date.parse(data.updated_at||new Date().toISOString());
-  sessionStorage.setItem(DEFAULT_ROOM_KEY,id);
-  setStatus(role==='viewer'?'viewer':'connected');
+  try{sessionStorage.setItem(DEFAULT_ROOM_KEY,id)}catch(e){}
+  setStatus('connecting');
   const roomLabel=document.getElementById('tl-live-room');if(roomLabel)roomLabel.textContent=data.club_name;
   channel=client.channel('touchline-room-'+id).on('postgres_changes',
     {event:'UPDATE',schema:'public',table:'touchline_workspaces',filter:'id=eq.'+id},
@@ -387,9 +388,17 @@ async function flush(){
 function now(){return Date.now()}
 async function bootstrap(){
  mountStatus();
+ const inviteMatch=new URLSearchParams(location.hash.replace(/^#/,''));
+ const code=inviteMatch.get('invite');
+ if(code && /^[0-9a-f]{36}$/i.test(code)){
+   pendingInvite=code;try{sessionStorage.setItem('tl-pending-invite',code)}catch(e){}
+   try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+ } else {try{pendingInvite=sessionStorage.getItem('tl-pending-invite')}catch(e){}}
+
  if(!ready){setStatus('setup','Cloud credentials are not yet configured.');return}
   try{
     const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.57.0');
+    document.body.classList.add('tl-cloud-enabled');
     client=createClient(config.projectUrl,config.publishableKey,
       {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   }catch(err){setStatus('error',err.message);return}
