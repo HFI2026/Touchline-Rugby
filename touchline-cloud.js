@@ -2,7 +2,7 @@
  * Requires TOUCHLINE_CLOUD_CONFIG.enabled and a provisioned Supabase project.
  * No service role credentials or private API secrets belong in this file.
  */
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.0';
+/* Browser SDK is loaded on demand only after a cloud project is configured. */
 
 const config=window.TOUCHLINE_CLOUD_CONFIG||{};
 const ready=Boolean(config.enabled&&/^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(config.projectUrl||'')&&/^(sb_publishable_|eyJ)/.test(config.publishableKey||''));
@@ -389,6 +389,7 @@ async function bootstrap(){
  mountStatus();
  if(!ready){setStatus('setup','Cloud credentials are not yet configured.');return}
   try{
+    const {createClient}=await import('https://esm.sh/@supabase/supabase-js@2.57.0');
     client=createClient(config.projectUrl,config.publishableKey,
       {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
   }catch(err){setStatus('error',err.message);return}
