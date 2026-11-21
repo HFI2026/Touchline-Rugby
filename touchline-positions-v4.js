@@ -44,8 +44,8 @@ function defaultScene(){
  ids.forEach((id,j)=>{
    if(id===15)d[id]={x:91,y:50};
    else if(id===11)d[id]={x:83,y:8};
-   else if(id===14)d[id]={x:83,y:92};
-   else {const index=ids.filter(k=>![11,14,15].includes(k)).indexOf(id);d[id]={x:72+(index%2)*5,y:11+Math.floor(index/2)*12}}
+   else if(id===14)d[id]={x:89,y:94};
+   else {const index=ids.filter(k=>![11,14,15].includes(k)).indexOf(id);d[id]={x:70+(index%2)*9,y:9+Math.floor(index/2)*15+(index%2)*5}}
  });
  return {attack:a,defence:d,ball:{x:45,y:51}};
 }
