@@ -1,4 +1,4 @@
-const CACHE='touchline-shell-v9';
+const CACHE='touchline-shell-v10';
 const SHELL=['./','./index.html','./manifest.webmanifest','./icons/touchline.svg','./touchline-studio.css','./touchline-studio.js','./touchline-animation-v2.css','./touchline-animation-v2.js','./touchline-experience-v3.css','./touchline-experience-v3.js','./touchline-positions-v4.js','./touchline-rules-v4.js','./touchline-selection-v4.js','./touchline-theme-v4.js','./touchline-presets-v4.js','./touchline-agegrade-v4.css'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('touchline-shell-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
