@@ -91,9 +91,9 @@ begin
  if not found then raise exception 'Only the administrator can invite people'; end if;
  select count(*) into _count from public.touchline_members where workspace_id=_workspace;
  if _count>=4 then raise exception 'Maximum of four testers reached'; end if;
- _code=encode(gen_random_bytes(18),'hex');
+ _code=encode(extensions.gen_random_bytes(18),'hex');
  insert into public.touchline_invites(workspace_id,code_hash,role,created_by)
- values(_workspace,encode(digest(_code,'sha256'),'hex'),_role,auth.uid());
+ values(_workspace,encode(extensions.digest(_code,'sha256'),'hex'),_role,auth.uid());
  return _code;
 end;$$;
 revoke all on function public.touchline_issue_invite(uuid,text) from public,anon,authenticated;
@@ -106,7 +106,7 @@ begin
  if auth.uid() is null then raise exception 'Sign in first'; end if;
  if length(coalesce(_code,'')) not between 16 and 128 then raise exception 'Invalid invitation'; end if;
  select * into _invite from public.touchline_invites
- where code_hash=encode(digest(trim(_code),'sha256'),'hex') for update;
+ where code_hash=encode(extensions.digest(trim(_code),'sha256'),'hex') for update;
  if not found or _invite.redeemed_by is not null or _invite.expires_at<now() then
   raise exception 'Invitation expired or already used';
  end if;
