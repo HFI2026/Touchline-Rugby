@@ -57,3 +57,5 @@ body.tl-live-auth-locked .app{filter:blur(4px);pointer-events:none}
  .tl-live-invites{grid-template-columns:1fr}
  .tl-live-access{padding:24px}
 }
+
+#tl-live-status[data-status="polling"] i{background:#bd8839;box-shadow:0 0 0 3px #f0e5c8}
