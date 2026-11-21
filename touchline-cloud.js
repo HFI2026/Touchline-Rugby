@@ -66,6 +66,7 @@ function notice(message,level='info'){
 }
 function setStatus(next,detail=''){
   status=next;
+  document.body.classList.toggle('tl-live-offline',next==='offline');
   const t=document.getElementById('tl-live-status'),message=document.getElementById('tl-live-label');
   if(t){t.dataset.status=next;t.title=detail||next}
   if(message)message.textContent=({connected:'Live · All changes saved',saving:'Syncing…',queued:'Changes waiting to sync',
@@ -423,7 +424,8 @@ async function bootstrap(){
     if(user)await loadMembership();
     else setStatus('login');
   }catch(err){setStatus('error','Authentication failed: '+err.message)}
-  window.addEventListener('online',()=>{if(workspace)refresh(true)});
+  window.addEventListener('online',()=>{if(workspace){refresh(true);if(localQueued)scheduleSave(100)}});
+  window.addEventListener('offline',()=>{if(workspace)setStatus('offline','No connection — edits cannot reach other testers. Reconnect before continuing.')});
   window.addEventListener('focus',()=>{if(workspace)refresh(true)});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&workspace)refresh(true)});
   poller=setInterval(()=>{if(workspace&&navigator.onLine!==false)refresh(false)},22000);
