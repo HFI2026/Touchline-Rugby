@@ -33,8 +33,8 @@ function backs(map,side,anchor,open){
 function scrum(map,side,spot){
  const n=size(),ballX=side==='attack'?45:55,y=spot;
  const sx=side==='attack'?40:49;
- // 3-2-3 schematic: front-row #1 #2 #3, locks #4 #5, back row #6 #8 #7.
- const coords={1:[0,-8],2:[0,0],3:[0,8],4:[-6,-4],5:[-6,4],6:[-12,-8],8:[-12,0],7:[-12,8]};
+ // Standard 3-4-1 scrum silhouette: front row 1-2-3; locks 4-5 flanked by 6-7; 8 at base.
+ const coords={1:[0,-8],2:[0,0],3:[0,8],4:[-6,-4],5:[-6,4],6:[-6,-11],7:[-6,11],8:[-12,0]};
  for(const [k,[dx,dy]] of Object.entries(coords)){if(+k>n)continue;map[k]=at(clamp(sx+(side==='attack'?dx:-dx),5,95),clamp(y+dy,6,94))}
  backs(map,side,{x:sx,y},y<40?'right':'left');
  return at(ballX,clamp(y+3,6,94));
