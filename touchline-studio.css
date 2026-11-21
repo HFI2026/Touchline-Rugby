@@ -1,0 +1,42 @@
+
+/* Touchline Coaching Studio */
+.studio-panel{background:#fffefa;border:1px solid #e9e6dc;border-radius:15px;padding:20px;margin-bottom:18px;box-shadow:0 9px 30px #20342b08}
+.studio-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.studio-bar .field{width:auto;max-width:100%;min-width:110px}
+.studio-kicker{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:#777e75;font-weight:750}
+.studio-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.studio-tabs button{padding:9px 13px;border:1px solid #dddcd3;border-radius:9px;background:#fffefa;color:#43554b;font-weight:650}
+.studio-tabs button.active{background:var(--primary);color:white;border-color:var(--primary)}
+.studio-hint{font-size:12px;color:#707b70}
+.studio-pitch{position:relative;width:100%;height:clamp(355px,55vw,570px);border:3px solid #f4f3eb;border-radius:12px;background:repeating-linear-gradient(90deg,#244d3f 0%,#244d3f 12.5%,#285342 12.5%,#285342 25%);touch-action:none;overflow:hidden;box-shadow:inset 0 0 0 1px #a6c0a5}
+.studio-pitch:before{content:"";position:absolute;inset:6% 5%;border:2px solid #ffffff70;pointer-events:none}
+.studio-midline{position:absolute;top:50%;left:5%;right:5%;border-top:2px dashed #ffffff80;pointer-events:none}
+.studio-22{position:absolute;top:26%;left:5%;right:5%;border-top:1px solid #ffffff70;pointer-events:none}
+.studio-try{position:absolute;bottom:6%;left:5%;right:5%;border-top:2px solid #ffffffa0;pointer-events:none}
+.studio-number{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;transform:translate(-50%,-50%);width:clamp(31px,5vw,42px);height:clamp(31px,5vw,42px);border-radius:50%;border:2px solid #ffffffd9;background:var(--primary);color:#fff;box-shadow:0 4px 9px #07140d50;cursor:grab;touch-action:none;user-select:none;font-size:14px;font-weight:800;z-index:2}
+.studio-number.focus{outline:3px solid var(--accent);outline-offset:2px;z-index:4}
+.studio-number:active{cursor:grabbing}
+.studio-number .studio-marker-name{display:none;position:absolute;top:100%;margin-top:4px;font-size:9px;line-height:1.15;min-width:76px;max-width:110px;text-align:center;color:#fff;font-weight:550;text-shadow:0 1px 4px #000e;pointer-events:none}
+.studio-number.focus .studio-marker-name{display:block}
+.studio-pitch svg.trails{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.studio-layout{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(250px,.7fr);gap:17px}
+.studio-side{display:grid;align-content:start;gap:14px}
+.studio-steps{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.studio-steps button{font-size:12px;border:1px solid #dfe2d7;background:#fffefa;border-radius:8px;padding:9px 10px}
+.studio-steps button.on{background:#e4ebdd;border-color:#7e9d83;font-weight:750}
+.studio-progress{height:9px;background:#e8ebe4;border-radius:20px;overflow:hidden;min-width:72px}
+.studio-progress>i{height:100%;display:block;background:var(--primary);border-radius:20px}
+.studio-table{border-collapse:collapse;width:100%;font-size:12px}
+.studio-table th,.studio-table td{padding:10px 8px;border-bottom:1px solid #e9e8de;text-align:left}
+.studio-table th{font-weight:720;color:#737b73}
+.studio-table tbody tr{cursor:pointer}
+.studio-table tbody tr:hover{background:#f5f6ee}
+.studio-viz{min-width:110px}
+.studio-att-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.studio-att-summary .card{padding:15px}
+.studio-att-summary strong{display:block;font-size:26px;font-variant-numeric:tabular-nums}
+.studio-banner{padding:12px;background:#f1f2eb;border-radius:9px;font-size:12px;color:#59675b}
+.studio-locked{opacity:.75}
+@media(max-width:850px){.studio-layout{grid-template-columns:1fr}.studio-att-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:500px){.studio-panel{padding:13px}.studio-pitch{height:425px}.studio-number{width:34px;height:34px}.studio-bar .field{flex:1;min-width:95px}.studio-att-summary{grid-template-columns:1fr 1fr}.studio-table{font-size:11px}.studio-table td,.studio-table th{padding:8px 5px}}
+@media(prefers-reduced-motion:reduce){.studio-number{transition:none!important}}
